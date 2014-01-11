@@ -1,0 +1,13 @@
+{
+  "manifest_version": 2,
+
+  "name": "Punchout",
+  "content_scripts": [
+    {
+      "matches": [],
+      "js": ["jquery.min.js", "app.js"]
+    }
+  ],
+  "description": "This extension helps hourly peons clock in and out",
+  "version": "1.0"
+}

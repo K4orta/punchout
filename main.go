@@ -11,9 +11,13 @@ import (
 func main() {
 
 	clockedIn := false
+	lunchBreakTaken := false
+
 	m := martini.Classic()
 
 	m.Get("/press", func(res http.ResponseWriter, req *http.Request) {
+		sse.Message("punchEvent", "message")
+
 		res.Header().Set("Content-Type", "application/json")
 		res.Write([]byte(fmt.Sprintf("{\"punch\": \"%s\"}", "accepted")))
 	})
@@ -22,7 +26,7 @@ func main() {
 
 	go func() {
 		for {
-			sse.Message("kind", "message")
+			sse.Message("punchEvent", "message")
 			time.Sleep(time.Second * 2)
 		}
 	}()
