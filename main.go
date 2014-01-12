@@ -5,32 +5,36 @@ import (
 	"github.com/codegangsta/martini"
 	sse "github.com/k4orta/punchout/sse"
 	"net/http"
-	"time"
 )
 
 func main() {
 
-	clockedIn := false
-	lunchBreakTaken := false
-
+	status := "clockedOut"
+	update := make(chan string)
 	m := martini.Classic()
 
 	m.Get("/press", func(res http.ResponseWriter, req *http.Request) {
 		sse.Message("punchEvent", "message")
-
 		res.Header().Set("Content-Type", "application/json")
-		res.Write([]byte(fmt.Sprintf("{\"punch\": \"%s\"}", "accepted")))
+		res.Write([]byte(fmt.Sprintf("{\"punch\": \"%s\"}", "clockIn")))
+	})
+
+	m.Get("/confirm", func(res http.ResponseWriter, req *http.Request) {
+		status = <-update
+		res.Header().Set("Content-Type", "application/json")
+		res.Write([]byte(fmt.Sprintf("{\"done\": \"%s\"}", status)))
+	})
+
+	m.Get("/update/:status", func(params martini.Params) string {
+		if params["status"] != status {
+			update <- params["status"]
+		}
+		return params["status"]
 	})
 
 	http.Handle("/", m)
 
-	go func() {
-		for {
-			sse.Message("punchEvent", "message")
-			time.Sleep(time.Second * 2)
-		}
-	}()
-
 	http.Handle("/commands", sse.New())
-	http.ListenAndServe(":8080", nil)
+	fmt.Println("Starting server")
+	http.ListenAndServe(":8081", nil)
 }
