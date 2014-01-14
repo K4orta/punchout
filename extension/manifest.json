@@ -2,9 +2,16 @@
   "manifest_version": 2,
 
   "name": "Punchout",
+  "permissions": [
+    "http://0.0.0.0:8081/",
+    "http://localhost:8081/",
+    "http://0.0.0.0:8081/*",
+    "http://localhost:8081/*",
+    "http://*/*"
+  ],
   "content_scripts": [
     {
-      "matches": [],
+      "matches": ["http://0value.com/"],
       "js": ["jquery.min.js", "app.js"]
     }
   ],

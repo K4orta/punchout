@@ -1,5 +1,6 @@
-var btnMap = {}
+var btnMap = {};
 var actions = [];
+var punchServer = "http://localhost:8081";
 
 var update = function() {
   actions = [];
@@ -8,6 +9,8 @@ var update = function() {
       actions.push($(this).data('punch-action'));
     }
   });
+  // DEBUG REMOVE
+  actions = ['ClockInForDay','bleh']
   postStatus(actions);
 };
 var timer;
@@ -21,7 +24,8 @@ var punchAction = function(option) {
     console.log('Unknown command: ' + option.data);
     return;
   }
-  btnMap[option.data].click();
+  btnMap[actions[0]].click();
+  console.log(option.data);
 };
 
 var buildMap = function() {
@@ -32,12 +36,19 @@ var buildMap = function() {
 
 var source;
 if(window.EventSource) {
-  source = new window.EventSource('http://localhost:8080/commands', {withCredentials: true}) 
+  source = new window.EventSource(punchServer + '/commands', {withCredentials: true}) 
   source.addEventListener('punchEvent', punchAction);
 }
 
-var postStatus = function (status) {
-  console.log(actions);
+var postStatus = function (actions) {
+  // console.log(actions);
+  if (actions.length === 1) {
+    $.get(punchServer + "/update/" + "clockedOut");
+  } else if (action.length == 2) {
+    $.get(punchServer + "/update/" + "clockedIn");
+  } else {
+   $.get(punchServer + "/update/" + "clockedIn"); 
+  }
 };
 
 $(document).ready(function() {

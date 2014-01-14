@@ -60,10 +60,7 @@ class WaitingLight(threading.Thread):
         for i in range(100):
             self.light.ChangeDutyCycle(100-i)
             time.sleep(0.01)
-
-class index:
-    def GET(self):
-        return json.dumps({'done':True})
+        self.light.ChangeDutyCycle(0)
 
 if __name__ == '__main__':
     signal.signal(signal.SIGINT, signal_handler)
